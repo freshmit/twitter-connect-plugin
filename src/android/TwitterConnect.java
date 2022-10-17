@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
+import com.twitter.sdk.android.core.*;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
@@ -14,16 +15,12 @@ import org.json.JSONObject;
 
 import android.content.Intent;
 
-import com.twitter.sdk.android.Twitter;
-import com.twitter.sdk.android.core.Callback;
-import com.twitter.sdk.android.core.Result;
-import com.twitter.sdk.android.core.TwitterAuthConfig;
-import com.twitter.sdk.android.core.TwitterCore;
-import com.twitter.sdk.android.core.TwitterException;
-import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterAuthClient;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
-import io.fabric.sdk.android.Fabric;
+import retrofit2.Response;
+import retrofit2.http.GET;
+import retrofit2.http.Query;
 
 public class TwitterConnect extends CordovaPlugin {
 
@@ -32,7 +29,16 @@ public class TwitterConnect extends CordovaPlugin {
 
 	public void initialize(CordovaInterface cordova, CordovaWebView webView) {
 		super.initialize(cordova, webView);
-		Fabric.with(cordova.getActivity().getApplicationContext(), new Twitter(new TwitterAuthConfig(getTwitterKey(), getTwitterSecret())));
+
+    final Context context = cordova.getActivity().getApplicationContext();
+
+    TwitterConfig config = new TwitterConfig.Builder(context)
+    .logger(new DefaultLogger(Log.DEBUG))
+    .twitterAuthConfig(new TwitterAuthConfig(this.getTwitterKey(), this.getTwitterSecret()))
+    .debug(true)
+    .build();
+    Twitter.initialize(config);
+
 		Log.v(LOG_TAG, "Initialize TwitterConnect");
 	}
 
@@ -54,10 +60,6 @@ public class TwitterConnect extends CordovaPlugin {
 			login(activity, callbackContext);
 			return true;
 		}
-		if (action.equals("logout")) {
-			logout(callbackContext);
-			return true;
-		}
 		return false;
 	}
 
@@ -65,33 +67,39 @@ public class TwitterConnect extends CordovaPlugin {
 		cordova.getThreadPool().execute(new Runnable() {
 			@Override
 			public void run() {
-				Twitter.logIn(activity, new Callback<TwitterSession>() {
-					@Override
-					public void success(Result<TwitterSession> twitterSessionResult) {
-						Log.v(LOG_TAG, "Successful login session!");
-						callbackContext.success(handleResult(twitterSessionResult.data));
+        TwitterAuthClient twitterAuthClient = new TwitterAuthClient();
+        twitterAuthClient.authorize(activity, new Callback<TwitterSession>() {
+          @Override
+          public void success(Result<TwitterSession> result) {
+            callbackContext.success(handleResult(result.data));
+          }
 
-					}
-
-					@Override
-					public void failure(TwitterException e) {
-						Log.v(LOG_TAG, "Failed login session");
-						callbackContext.error("Failed login session");
-					}
-				});
+          @Override
+          public void failure(TwitterException exception) {
+            callbackContext.error(exception.toString());
+          }
+        });
 			}
 		});
 	}
 
-	private void logout(final CallbackContext callbackContext) {
-		cordova.getThreadPool().execute(new Runnable() {
-			@Override
-			public void run() {
-				Twitter.logOut();
-				Log.v(LOG_TAG, "Logged out");
-				callbackContext.success();
-			}
-		});
+	/**
+	 * Extends TwitterApiClient adding our additional endpoints
+	 * via the custom 'UserService'
+	 */
+	class UserServiceApi extends TwitterApiClient {
+		public UserServiceApi(TwitterSession session) {
+			super(session);
+		}
+
+		public UserService getCustomService() {
+			return getService(UserService.class);
+		}
+	}
+
+	interface UserService {
+		@GET("/1.1/users/show.json")
+		void show(@Query("user_id") long id, Callback<Response> cb);
 	}
 
 	private JSONObject handleResult(TwitterSession result) {

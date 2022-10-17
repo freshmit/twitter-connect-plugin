@@ -1,9 +1,9 @@
 {
-  "name": "twitter-connect-plugin",
-  "version": "0.3.0",
+  "name": "cordova-plugin-twitter-connect",
+  "version": "1.0.1",
   "description": "Twitter Connect Plugin - Allows single-sign on logins using Twitter",
   "cordova": {
-    "id": "twitter-connect-plugin",
+    "id": "cordova-plugin-twitter-connect",
     "platforms": [
       "android",
       "ios"

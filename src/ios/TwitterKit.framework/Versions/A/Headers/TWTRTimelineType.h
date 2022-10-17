@@ -18,4 +18,8 @@ typedef NS_ENUM(NSUInteger, TWTRTimelineType) {
      *  Search Timeline
      */
     TWTRTimelineTypeSearch,
+    /**
+     *  Collection Timeline
+     */
+    TWTRTimelineTypeCollection,
 };

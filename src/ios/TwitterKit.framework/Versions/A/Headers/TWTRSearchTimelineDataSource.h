@@ -11,32 +11,28 @@
 @class TWTRAPIClient;
 
 /**
- *  Data source representing a Search Timeline.
+Data source representing a Search Timeline. Provides TWTRTweet objects to a TWTRTimelineViewController in pages determined by the TWTRTimelineCursor object passed in to the `loadNext:` and `loadPrevious:` methods.
 
- *  ## Examples:
- *  watching now	containing both “watching” and “now”. Default.
- *  “happy hour”	containing the exact phrase “happy hour”.
- *  love OR hate	containing either “love” or “hate” (or both).
- *  beer -root      containing “beer” but not “root”.
- *  #haiku          containing the hashtag “haiku”.
- *  from:alexiskold	sent from person “alexiskold”.
- *  to:techcrunch	sent to person “techcrunch”.
- *  @mashable       referencing person “mashable”.
- *  flight :(       containing “flight” and with a negative attitude.
- *  traffic ?       containing “traffic” and asking a question.
- *  movie -scary :)	containing “movie”, but not “scary”, and with a
- *                  positive attitude.
- *  hilarious filter:links      containing “hilarious” and linking to
- *                              URL.
- *  news source:twitterfeed     containing “news” and entered via
- *                              TwitterFeed
- *  superhero since:2010-12-27	containing “superhero” and sent since
- *                              date “2010-12-27” (year-month-day).
- *  ftw until:2010-12-27        containing “ftw” and sent before the
- *                              date “2010-12-27”.
+## Search Queries:
 
- *  @see https://dev.twitter.com/rest/public/search
- *  Not implemented: `geocode`, `result_type`
+ * `watching now`	containing both “watching” and “now”. Default.
+ * `“happy hour”`	containing the exact phrase “happy hour”.
+ * `love OR hate`	containing either “love” or “hate” (or both).
+ * `beer -root`     containing “beer” but not “root”.
+ * `#haiku`         containing the hashtag “haiku”.
+ * `from:alexiskold`sent from person “alexiskold”.
+ * `to:techcrunch`	sent to person “techcrunch”.
+ * `@mashable`      referencing person “mashable”.
+ * `flight :(`      containing “flight” and with a negative attitude.
+ * `traffic ?`      containing “traffic” and asking a question.
+ * `movie -scary :)`containing “movie”, but not “scary”, and with a positive attitude.
+ * `hilarious filter:links` containing “hilarious” and linking to URL.
+ * `news source:twitterfeed`containing “news” and entered via TwitterFeed
+ * `superhero since:2010-12-27`	containing “superhero” and sent since date “2010-12-27” (year-month-day).
+ * `ftw until:2010-12-27`   containing “ftw” and sent before the date “2010-12-27”.
+
+  @see https://dev.twitter.com/rest/public/search
+  Not implemented: `geocode`, `result_type`
  */
 @interface TWTRSearchTimelineDataSource : NSObject <TWTRTimelineDataSource>
 

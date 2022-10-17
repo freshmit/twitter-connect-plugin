@@ -6,6 +6,9 @@ var TwitterConnect = {
 	},
 	logout: function (successCallback, errorCallback) {
 		exec(successCallback, errorCallback, 'TwitterConnect', 'logout', []);
+	},
+	showUser: function (successCallback, errorCallback) {
+		exec(successCallback, errorCallback, 'TwitterConnect', 'showUser', []);
 	}
 };
 
